@@ -1,0 +1,5 @@
+<S> ::= a<A>
+<A> ::= b
+teste
+se
+senao
