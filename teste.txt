@@ -1,8 +1,11 @@
 teste
 se
 senao
-BEGIN
-123
-END
-IF
-ELSE
+begin
+end
+if
+else
+endif
+:=
+=
+;

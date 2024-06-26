@@ -1,0 +1,10 @@
+<S> ::= A<var> | E<var> | I<var> | O<var> | U<var> | B<var> | C<var> | D<var> | F<var> | G<var> | H<var> | J<var> | K<var> | L<var> | M<var> | N<var> | P<var> | Q<var> | R<var> | S<var> | T<var> | V<var> | W<var> | X<var> | Y<var> | Z<var> | ε
+<var> ::= A<var> | E<var> | I<var> | O<var> | U<var> | B<var> | C<var> | D<var> | F<var> | G<var> | H<var> | J<var> | K<var> | L<var> | M<var> | N<var> | P<var> | Q<var> | R<var> | S<var> | T<var> | V<var> | W<var> | X<var> | Y<var> | Z<var> | 0<var> | 1<var> | 2<var> | 3<var> | 4<var> | 5<var> | 6<var> | 7<var> | 8<var> | 9<var> | ε
+if
+true
+false
+let
+;
+=
+{
+}

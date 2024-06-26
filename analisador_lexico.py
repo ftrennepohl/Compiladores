@@ -32,30 +32,37 @@ class AF:
     def __init__(self) -> None:
         self.estados = {}
         self.alfabeto = set()
+        caracteres = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        for i in caracteres: self.alfabeto.add(i)
         
     def criaAF(self, cadeia, gerador_ids):
-        nome_gramatica = re.search('^<[A-Z]>', cadeia)
+        nome_gramatica = re.search('^<([a-zA-Z\\d]+)> ::=', cadeia)
         if nome_gramatica: # se for uma gramatica
-            transicoes_term = re.findall('[|]?\\s([a-z]{1})[^<][|]?', cadeia)
-            transicoes_nterm = re.findall('[|]?\\s([a-z]<[A-Z]>)\\s?[|]?', cadeia)
-            novo_estado = Estado(id=nome_gramatica.group(0)[1])
-            print('nao terminais', transicoes_nterm)
-            print('terminais', transicoes_term)
-            if(len(transicoes_term) > 0): novo_estado.final = True
+            existe_transicoes_term = re.search('[|]?\\s([a-z]{1})[^<][|]?', cadeia)
+            transicoes_term = re.finditer('[|]?\\s([a-z]{1})[^<][|]?', cadeia)
+            transicoes_nterm = re.finditer('[|]?\\s([a-zA-Z\\d]+)(<[a-zA-Z\\d]+>)\\s?[|]?', cadeia)
+            if(nome_gramatica not in self.estados.keys()):
+                novo_estado = Estado(id=nome_gramatica[1])
+            else:
+                novo_estado = self.estados[nome_gramatica]
+            for i in transicoes_term: print(i.group(1))
+            #print('terminais', transicoes_term)
+            if(existe_transicoes_term): novo_estado.final = True
             for t in transicoes_nterm:
-                simb_terminal = t[0]
-                simb_n_terminal = t[2]
-                self.alfabeto.add(simb_terminal)
-                novo_estado.adcTransicao(simb_terminal, simb_n_terminal)
+                simb_transicao = t[1]
+                estado_destino = t[2]
+                self.alfabeto.add(simb_transicao)
+                novo_estado.adcTransicao(simb_transicao, estado_destino)
             for t in transicoes_term:
-                simb_terminal = t[0]
-                self.alfabeto.add(simb_terminal)
-                novo_estado.transicoes[simb_terminal] = None
+                simb_transicao = t[1]
+                self.alfabeto.add(simb_transicao)
+                novo_estado.transicoes[simb_transicao] = None
             self.estados[novo_estado.id] = novo_estado
         else: # se for um token
             #token = re.search('[a-zA-Z]+', cadeia)[0]
             token = cadeia
-            for i in range(len(token)):
+            qtd_simbolos = len(token)
+            for i in range(qtd_simbolos):
                 self.alfabeto.add(token[i])
                 if(i == 0): # Adiciona a transicao do primeiro simbolo do token no estado inicial
                     if('S' in self.estados.keys()):
@@ -65,13 +72,13 @@ class AF:
                         next(gerador_ids)
                         self.estados['S'] = Estado('S')
                         self.estados['S'].adcTransicao(token[0], gerador_ids.id_atual)
+                elif(i == qtd_simbolos-1):
+                    novo_estado = Estado(gerador_ids.id_atual, final=True)
+                    self.estados[novo_estado.id] = novo_estado
                 else:
                     novo_estado = Estado(gerador_ids.id_atual)
                     novo_estado.adcTransicao(token[i], next(gerador_ids))
                     self.estados[novo_estado.id] = novo_estado
-            estado_aceita = Estado(gerador_ids.id_atual, final=True)
-            self.estados[estado_aceita.id] = estado_aceita
-            next(gerador_ids)
     
     def imprimir(self):
         tabela = PrettyTable()
@@ -89,6 +96,8 @@ class AF:
                     linha.append('-')
             tabela.add_row(linha)
         print(tabela)
+        with open("out.txt", "w+") as arq:
+            arq.write(str(tabela))
 
     def determiniza(self):
         while True:
@@ -161,10 +170,10 @@ class Token:
 def analisadorLexico(caminho):
 
     # Definicao dos tokens:
-    palavras_reservadas = ("BEGIN", "END", "IF", "ELSE")
+    palavras_reservadas = ("BEGIN", "END", "IF", "ELSE", "if", "true", "let", "false")
     # identificadores: devem iniciar com uma letra, seguida de letras ou dígitos
     # símbolos
-    constantes = ("123", "Hello World!")
+    constantes = ("Hello World!", "HEITOR", "LUCAS", "ALEX", "RIAN", "NEWGUY")
 
     gerador_ids = iter(Gerador_Ids())
 
@@ -191,7 +200,7 @@ def analisadorLexico(caminho):
                 tem_variavel = True
                 atributos_tokens.append(Token(linha, rotulo, identificador))
                 continue
-            elif(re.match("[+-=;:]", token)):
+            elif(re.match("[+-=;:{}]+", token)):
                 rotulo = "Simbolo"
             elif(token in constantes):
                 rotulo = "Constante"
@@ -210,11 +219,12 @@ def analisadorLexico(caminho):
                 for destino in lista_destinos:
                     analisador.estados[estado.id].adcTransicao(simb, destino)
     if(tem_variavel): # tem
-        novo_estado = Estado(str(next(gerador_ids)), final=True)
+        novo_estado = Estado("V", final=True)
         analisador.estados[novo_estado.id] = novo_estado
         for simbolo in analisador.alfabeto:
-            analisador.estados[novo_estado.id].adcTransicao(simbolo, novo_estado.id)
-            analisador.estados['S'].adcTransicao(simbolo, novo_estado.id)
+            if re.match("[A-Z]", simbolo):
+                analisador.estados[novo_estado.id].adcTransicao(simbolo, novo_estado.id)
+                analisador.estados['S'].adcTransicao(simbolo, novo_estado.id)
         print(novo_estado.id)
     analisador.estados['F'] = Estado(id='F')
     print()
@@ -225,4 +235,7 @@ def analisadorLexico(caminho):
     tabela_simbolos.align = 'l'
     print(tabela_simbolos)
 
+
 analisadorLexico("teste.txt")
+
+#analisadorLexico("teste.txt")
