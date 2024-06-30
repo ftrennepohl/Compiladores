@@ -80,7 +80,7 @@ class AFND:
         else:
             self.states[left].final = True
 
-        if goal_grammar not in self.states:
+        if goal_grammar not in self.states and goal_grammar != '':
             self.states[goal_grammar] = State(goal_grammar)
         for symbol in production:
             if symbol == '<':
@@ -90,10 +90,10 @@ class AFND:
             
             if symbol.islower():
                 self.alphabet.add(symbol)
-                new_state_id = next(State.iterator)
-                new_state = State(new_state_id)
-                self.states[new_state_id] = new_state
-                self.states[new_state_id].final = True
+                #new_state_id = next(State.iterator)
+                #new_state = State(new_state_id)
+                #self.states[new_state_id] = new_state
+                #self.states[new_state_id].final = True
                 current_state.addTransition(symbol, self.states[goal_grammar])
             else:
                 continue
@@ -133,10 +133,10 @@ class AFND:
         with open("out.txt", "w+") as arq:
             arq.write(str(table))
 
-afnd = AFND()
+'''afnd = AFND()
 afnd.fromFile('input.txt')
 #afnd.printStates()
-afnd.printWithError()
+afnd.printWithError()'''
 '''
 for state in afnd.states:
     print(str(state) + '->')
