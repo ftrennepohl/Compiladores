@@ -133,10 +133,16 @@ class AFND:
         with open("out.txt", "w+") as arq:
             arq.write(str(table))
 
-'''afnd = AFND()
-afnd.fromFile('input.txt')
+#afnd = AFND()
+#afnd.fromFile('input.txt')
 #afnd.printStates()
-afnd.printWithError()'''
+#afnd.printWithError()
+'''
+for state in afnd.states.values():
+    print(state)
+    for transition in state.transitions.values():
+        print(transition)
+'''
 '''
 for state in afnd.states:
     print(str(state) + '->')

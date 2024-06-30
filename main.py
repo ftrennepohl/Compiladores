@@ -3,4 +3,4 @@ from afnd import AFND
 
 afd = AFD()
 #afnd.printStates()
-afd.printWithError()
+#afd.printWithError()

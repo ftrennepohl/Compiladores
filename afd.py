@@ -20,7 +20,8 @@ class AFD(AFND):
                         state_ids = [str(s.id) for s in transition]
                         new_state = State(id=f"[{', '.join(state_ids)}]")
                         transition.clear()
-                        transition.append(new_state.id)
+                        transition.append(new_state)
+                        #print(transition)
                         non_deterministic = True
                         break
                 if(non_deterministic): break
@@ -36,3 +37,4 @@ class AFD(AFND):
                     new_state.final = True
             for state in nd_transition:
                 self.afd.states.pop(state.id)
+        self.afd.printWithError()
