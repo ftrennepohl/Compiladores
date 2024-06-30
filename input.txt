@@ -1,5 +1,11 @@
-se
-entao
-senao
-<S> ::= a<A> | e<A> | i<A> | o<A> | u<A>
-<A> ::= a<A> | e<A> | i<A> | o<A> | u<A> | ε
+BEGIN
+END
+ENDIF
+IF
+ELSE
+VAR
+=
+==
+;
+<S> ::= a<V> | b<V> | c<V> | d<V> | e<V> | f<V> | g<V> | h<V> | i<V> | j<V> | k<V> | l<V> | m<V> | n<V> | o<V> | p<V> | q<V> | r<V> | s<V> | t<V> | u<V> | v<V> | w<V> | x<V> | y<V> | z<V>
+<V> ::= a<V> | b<V> | c<V> | d<V> | e<V> | f<V> | g<V> | h<V> | i<V> | j<V> | k<V> | l<V> | m<V> | n<V> | o<V> | p<V> | q<V> | r<V> | s<V> | t<V> | u<V> | v<V> | w<V> | x<V> | y<V> | z<V> | &

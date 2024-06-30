@@ -1,5 +1,6 @@
 import re
 import itertools
+from prettytable import PrettyTable as pt
 
 class State:
     iterator = itertools.count()
@@ -62,9 +63,8 @@ class AFND:
         #não terminal que será adicionada como alvo
         goal_grammar = ''
         #verifica se o estado é final
-        final_pattern = re.compile(r'ε')
+        final_pattern = re.compile(r'&')
         is_final = final_pattern.findall(production)
-
         #cria o estado, caso não exista
         if left not in self.states:
             self.states[left] = State(left)
@@ -90,12 +90,11 @@ class AFND:
             
             if symbol.islower():
                 self.alphabet.add(symbol)
-                #new_state_id = next(State.iterator)
-                #new_state = State(new_state_id)
-                #self.states[new_state_id] = new_state
-                
+                new_state_id = next(State.iterator)
+                new_state = State(new_state_id)
+                self.states[new_state_id] = new_state
+                self.states[new_state_id].final = True
                 current_state.addTransition(symbol, self.states[goal_grammar])
-                #current_state = new_state
             else:
                 continue
 
@@ -109,10 +108,38 @@ class AFND:
             
             current_state.addTransition(symbol, new_state)
             current_state = new_state
-        
-        current_state.final = True
+            if symbol == token[-1]:
+                current_state.final = True
 
-# Example usage
+    def printWithError(self):
+        table = pt()
+        table.align = 'l'
+        header = [symbol for symbol in self.alphabet]
+        header.insert(0, 'Est/Simb')
+        table.field_names = header
+        for state in self.states:
+            linha = [str(state) + ' *'] if self.states[state].final else [state]
+            for key in self.alphabet:
+                if key in self.states[state].transitions:
+                    fragmento = ''
+                    for x in self.states[state].transitions[key]:
+                        if x != self.states[state].transitions[key][-1]: fragmento = fragmento + str(x.id) + ', '
+                        else: fragmento = fragmento + str(x.id)
+                    linha.append(fragmento)
+                else:
+                    linha.append('-')
+            table.add_row(linha)
+        print(table)
+        with open("out.txt", "w+") as arq:
+            arq.write(str(table))
+
 afnd = AFND()
 afnd.fromFile('input.txt')
-afnd.printStates()
+#afnd.printStates()
+afnd.printWithError()
+'''
+for state in afnd.states:
+    print(str(state) + '->')
+    for transition in afnd.states[state].transitions:
+        print(transition)
+'''
