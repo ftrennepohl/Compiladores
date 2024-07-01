@@ -14,17 +14,25 @@ class LexicalAnalyzer:
     def createSymbolTable(self, path):
         st = SymbolTable()
         with open(path, 'r') as file:
-            recognised_tokens = []
             for line_idx, line in enumerate(file):
                 current_state = 'S'
                 character_buffer = ''
                 for symbol_idx, symbol in enumerate(line):
-                    print(current_state)
-                    if symbol == ' ' or symbol_idx == '\n': # se for separador e estado for final adiciona na TS
+                    if (symbol == ' ' or symbol == '\n') and current_state is not None: # se for separador e estado for final adiciona na TS
                         if self.afd.states[current_state].final:
-                            st.table.append(Token(line_idx, current_state, character_buffer))
+                            st.table.append(Token(line_idx + 1, current_state, character_buffer))
                             current_state = 'S'
                             character_buffer = ''
+                            continue
+                    elif symbol_idx == len(line)-1: # gambiarra sinistra pq nao tem como detectar final de arquivo
+                        character_buffer += symbol
+                        current_state = self.goToNextState(self.afd, current_state, symbol)
+                        if current_state is not None:
+                            if self.afd.states[current_state].final:
+                                st.table.append(Token(line_idx, current_state, character_buffer))
+                                current_state = 'S'
+                                character_buffer = ''
+                                continue
                     current_state = self.goToNextState(self.afd, current_state, symbol)
                     if(current_state is None):
                         continue
