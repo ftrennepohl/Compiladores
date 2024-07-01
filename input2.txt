@@ -1,8 +1,8 @@
 BEGIN
-VAR x = TRUE
-VAR y = FALSE
+LET x = TRUE
+LET y = FALSE
 IF x
-VAR z = FALSE
+LET z = FALSE
 ENDIF
 END
 ####

@@ -22,7 +22,10 @@ class LexicalAnalyzer:
                     if (symbol == ' ' or symbol == '\n') and current_state is not None: # se for separador e estado for final adiciona na TS
                         if self.afd.states[current_state].final:
                             st.table.append(Token(line_idx + 1, current_state, character_buffer))
-                            tape.append(character_buffer)
+                            if (current_state in self.afd.gr):
+                                tape.append('var')
+                            else:
+                                tape.append(character_buffer)
                             current_state = 'S'
                             character_buffer = ''
                             continue
@@ -32,7 +35,10 @@ class LexicalAnalyzer:
                         if current_state is not None:
                             if self.afd.states[current_state].final:
                                 st.table.append(Token(line_idx, current_state, character_buffer))
-                                tape.append(character_buffer)
+                                if (current_state in self.afd.gr):
+                                    tape.append('var')
+                                else:
+                                    tape.append(character_buffer)
                                 current_state = 'S'
                                 character_buffer = ''
                                 continue

@@ -28,7 +28,7 @@ class AFND:
         self.states = {}
         self.alphabet = set()
         self.initial_state = self.addState(State('S'))
-
+        self.gr = set()
     def addState(self, state):
         self.states[state.id] = state
         return state
@@ -82,6 +82,7 @@ class AFND:
 
         if goal_grammar not in self.states and goal_grammar != '':
             self.states[goal_grammar] = State(goal_grammar)
+        self.gr.add(goal_grammar)
         for symbol in production:
             if symbol == '<':
                 continue
