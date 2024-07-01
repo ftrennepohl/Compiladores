@@ -1,1 +1,8 @@
-se entao senao
+BEGIN
+LET x = TRUE
+LET y = FALSE
+IF x
+LET z = FALSE
+ENDIF
+END
+####

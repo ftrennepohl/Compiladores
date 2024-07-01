@@ -12,6 +12,7 @@ class LexicalAnalyzer:
         return afd.states[currentState].transitions[symbol][0].id if currentState in afd.states.keys() and symbol in afd.states[currentState].transitions.keys() else None
 
     def createSymbolTable(self, path):
+        tape = []
         st = SymbolTable()
         with open(path, 'r') as file:
             for line_idx, line in enumerate(file):
@@ -21,6 +22,10 @@ class LexicalAnalyzer:
                     if (symbol == ' ' or symbol == '\n') and current_state is not None: # se for separador e estado for final adiciona na TS
                         if self.afd.states[current_state].final:
                             st.table.append(Token(line_idx + 1, current_state, character_buffer))
+                            if (current_state in self.afd.gr):
+                                tape.append('var')
+                            else:
+                                tape.append(character_buffer)
                             current_state = 'S'
                             character_buffer = ''
                             continue
@@ -30,6 +35,10 @@ class LexicalAnalyzer:
                         if current_state is not None:
                             if self.afd.states[current_state].final:
                                 st.table.append(Token(line_idx, current_state, character_buffer))
+                                if (current_state in self.afd.gr):
+                                    tape.append('var')
+                                else:
+                                    tape.append(character_buffer)
                                 current_state = 'S'
                                 character_buffer = ''
                                 continue
@@ -38,6 +47,7 @@ class LexicalAnalyzer:
                         continue
                     character_buffer += symbol
         st.print()
-
-lex = LexicalAnalyzer(AFD('input2.txt'))
+        print(tape)
+        
+lex = LexicalAnalyzer(AFD('input.txt'))
 lex.createSymbolTable('input2.txt')
