@@ -1,0 +1,12 @@
+S'-> S
+S -> BEGIN A END
+A -> BEGIN A END
+A -> IF B THEN A ENDIF
+A -> LET C = D A
+B -> D == D
+B -> D != D
+C -> id
+D -> val
+D -> id
+D -> TRUE
+D -> FALSE
