@@ -1,11 +1,14 @@
 BEGIN
 END
 ENDIF
+THEN
 IF
 ELSE
 VAR
+TRUE
+FALSE
 =
 ==
 ;
 <S> ::= a<V> | b<V> | c<V> | d<V> | e<V> | f<V> | g<V> | h<V> | i<V> | j<V> | k<V> | l<V> | m<V> | n<V> | o<V> | p<V> | q<V> | r<V> | s<V> | t<V> | u<V> | v<V> | w<V> | x<V> | y<V> | z<V>
-<V> ::= a<V> | b<V> | c<V> | d<V> | e<V> | f<V> | g<V> | h<V> | i<V> | j<V> | k<V> | l<V> | m<V> | n<V> | o<V> | p<V> | q<V> | r<V> | s<V> | t<V> | u<V> | v<V> | w<V> | x<V> | y<V> | z<V> | &
+<V> ::= a<V> | b<V> | c<V> | d<V> | e<V> | f<V> | g<V> | h<V> | i<V> | j<V> | k<V> | l<V> | m<V> | n<V> | o<V> | p<V> | q<V> | r<V> | s<V> | t<V> | u<V> | v<V> | w<V> | x<V> | y<V> | z<V> | 1<V> | 2<V> | 3<V> | 4<V> | 5<V> | 6<V> | 7<V> | 8<V> | 9<V> | 0<V> | &

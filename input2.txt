@@ -1,1 +1,8 @@
-se entao senao
+BEGIN
+VAR x = TRUE
+VAR y = FALSE
+IF x
+VAR z = FALSE
+ENDIF
+END
+####
