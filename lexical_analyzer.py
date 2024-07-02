@@ -3,9 +3,14 @@ from symbol_table import SymbolTable, Token
 
 class LexicalAnalyzer:
 
-    def __init__(self, afd) -> None:
+    def __init__(self, afd:AFD) -> None:
         self.afd = afd
         self.afd.printWithError()
+        self.labels = {
+            'palavra reservada' : ['BEGIN', 'END', 'ENDIF', 'THEN', 'IF', 'ELSE', 'LET'],
+            'simbolo' : ['=', '==', ';'],
+            'const' : ['TRUE', 'FALSE']
+        }
 
     @staticmethod
     def goToNextState(afd:AFD, currentState, symbol):
@@ -21,11 +26,15 @@ class LexicalAnalyzer:
                 for symbol_idx, symbol in enumerate(line):
                     if (symbol == ' ' or symbol == '\n') and current_state is not None: # se for separador e estado for final adiciona na TS
                         if self.afd.states[current_state].final:
-                            st.table.append(Token(line_idx + 1, current_state, character_buffer))
                             if (current_state in self.afd.gr):
                                 tape.append('var')
+                                st.table.append(Token(line_idx + 1, 'var', character_buffer))
                             else:
                                 tape.append(character_buffer)
+                                for k, v in self.labels.items():
+                                    if character_buffer in v:
+                                        label = k
+                                st.table.append(Token(line_idx + 1, label, character_buffer))
                             current_state = 'S'
                             character_buffer = ''
                             continue
@@ -34,20 +43,27 @@ class LexicalAnalyzer:
                         current_state = self.goToNextState(self.afd, current_state, symbol)
                         if current_state is not None:
                             if self.afd.states[current_state].final:
-                                st.table.append(Token(line_idx, current_state, character_buffer))
                                 if (current_state in self.afd.gr):
                                     tape.append('var')
+                                    st.table.append(Token(line_idx + 1, 'var', character_buffer))
                                 else:
                                     tape.append(character_buffer)
+                                    for k, v in self.labels.items():
+                                        if character_buffer in v:
+                                            label = k
+                                    st.table.append(Token(line_idx + 1, label, character_buffer))
                                 current_state = 'S'
                                 character_buffer = ''
                                 continue
                     current_state = self.goToNextState(self.afd, current_state, symbol)
-                    if(current_state is None):
+                    if(current_state is None) and (symbol == ' ' or symbol == '\n' or symbol_idx == len(line)-1) :
+                        st.table.append(Token(line_idx + 1, 'REJECTED', character_buffer))
+                        tape.append('REJECTED')
                         continue
                     character_buffer += symbol
         st.print()
         print(tape)
+        return tape
         
 lex = LexicalAnalyzer(AFD('input.txt'))
 lex.createSymbolTable('input2.txt')
