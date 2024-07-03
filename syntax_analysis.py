@@ -1,9 +1,11 @@
 import pandas as pd
-
+from lexical_analyzer import LexicalAnalyzer
+from symbol_table import Token
 
 def syntactic_analyzer(output_tape, parsing_table_path):
     parsing_table = pd.read_csv(parsing_table_path, index_col=0)
-    tokens = [token for token in output_tape].append('$')
+    tokens = [token for token in output_tape]
+    tokens.append('$')
     stack = [0]  # Initial stack with state 0
     idx = 0  # Index for the current token
     token = tokens[idx] if idx < len(tokens) else None
@@ -59,11 +61,20 @@ def syntactic_analyzer(output_tape, parsing_table_path):
                 stack.pop()  # C -> id
                 goto_state = parsing_table.at[stack[-1], 'C']
                 stack.append(int(goto_state))
-            elif rule in [9, 10, 11, 12]:
-                stack.pop()  # D -> val | id | TRUE | FALSE
+            elif rule in [9, 10]:
+                stack.pop()  # D -> id | const
                 goto_state = parsing_table.at[stack[-1], 'D']
                 stack.append(int(goto_state))
         elif action == 'acc':
             return True, "Success: Input is syntactically correct"
         else:
             return False, "Error: Unrecognized action in parsing table"
+
+
+
+def convertTapeOutput(output_tape, symbol_table): # prepara a fita de saída para usar com o analisador sintatico
+    aux_tape = [token for token in output_tape]
+    for idx, token in enumerate(output_tape):
+        for entry in symbol_table:
+            if token == entry.identificador and (entry.rotulo == 'id' or entry.rotulo == 'const'): aux_tape[idx] = entry.rotulo
+    return aux_tape

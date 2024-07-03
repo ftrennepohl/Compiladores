@@ -3,14 +3,16 @@ from symbol_table import SymbolTable, Token
 
 class LexicalAnalyzer:
 
-    def __init__(self, afd:AFD) -> None:
-        self.afd = afd
-        self.afd.printWithError()
-        self.labels = {
+    labels = {
             'palavra reservada' : ['BEGIN', 'END', 'ENDIF', 'THEN', 'IF', 'ELSE', 'LET'],
             'simbolo' : ['=', '==', ';'],
             'const' : ['TRUE', 'FALSE']
         }
+
+    def __init__(self, afd:AFD) -> None:
+        self.afd = afd
+        self.afd.printWithError()
+        self.symbol_table = SymbolTable
 
     @staticmethod
     def goToNextState(afd:AFD, currentState, symbol):
@@ -27,8 +29,8 @@ class LexicalAnalyzer:
                     if (symbol == ' ' or symbol == '\n') and current_state is not None: # se for separador e estado for final adiciona na TS
                         if self.afd.states[current_state].final:
                             if (current_state in self.afd.gr):
-                                tape.append('var')
-                                st.table.append(Token(line_idx + 1, 'var', character_buffer))
+                                tape.append('id')
+                                st.table.append(Token(line_idx + 1, 'id', character_buffer))
                             else:
                                 tape.append(character_buffer)
                                 for k, v in self.labels.items():
@@ -44,8 +46,8 @@ class LexicalAnalyzer:
                         if current_state is not None:
                             if self.afd.states[current_state].final:
                                 if (current_state in self.afd.gr):
-                                    tape.append('var')
-                                    st.table.append(Token(line_idx + 1, 'var', character_buffer))
+                                    tape.append('id')
+                                    st.table.append(Token(line_idx + 1, 'id', character_buffer))
                                 else:
                                     tape.append(character_buffer)
                                     for k, v in self.labels.items():
@@ -61,6 +63,7 @@ class LexicalAnalyzer:
                         tape.append('REJECTED')
                         continue
                     character_buffer += symbol
+        self.symbol_table = st
         st.print()
         print(tape)
         return tape

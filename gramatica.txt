@@ -7,7 +7,5 @@ A -> ''
 B -> D == D
 B -> D != D
 C -> id
-D -> val
 D -> id
-D -> TRUE
-D -> FALSE
+D -> const
