@@ -60,12 +60,8 @@ def syntactic_analyzer(output_tape, parsing_table_path, symbol_table:SymbolTable
                     print("Erro na produção A -> BEGIN A END", stack, token)
                 stack.append(int(goto_state))
             elif rule == 3:
-                for entry in symbol_table.table:
-                    if entry.identificador == result_stack[-1]: tipo_t1 = entry.tipo
-                    if entry.identificador == result_stack[-2]: tipo_t2 = entry.tipo
-                if tipo_t1 != tipo_t2:
-                    return False, 'Erro semântico: não é possível comparar tipos diferentes'
                 stack = stack[:-6]  # A -> IF B THEN A ENDIF A
+                print(stack[-1])
                 try:
                     goto_state = parsing_table.at[stack[-1], 'A']
                 except KeyError:
@@ -104,11 +100,6 @@ def syntactic_analyzer(output_tape, parsing_table_path, symbol_table:SymbolTable
                 except KeyError:
                     print("Erro na produção B -> D == D", stack, token)
                 stack.append(int(goto_state))
-                for entry in symbol_table.table:
-                    if entry.identificador == result_stack[-1]: tipo_t1 = entry.tipo
-                    if entry.identificador == result_stack[-2]: tipo_t2 = entry.tipo
-                if tipo_t1 != tipo_t2:
-                    print('Erro semântico: não é possível comparar tipos diferentes')
             elif rule == 7:
                 stack = stack[:-3]  # B -> D != D
                 try:
@@ -123,7 +114,6 @@ def syntactic_analyzer(output_tape, parsing_table_path, symbol_table:SymbolTable
                     goto_state = parsing_table.at[stack[-1], 'C']
                 except KeyError:
                     print("Erro na produção C -> id", stack, token)
-                if (len(tokens_values) > 0): symbol_table.setValue(token, tokens_values.pop())
                 stack.append(int(goto_state))
             elif rule in [9, 10]:
                 if (len(tokens_values) > 0): symbol_table.setValue(tokens[idx-1], tokens_values.pop())

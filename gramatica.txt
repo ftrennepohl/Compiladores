@@ -1,7 +1,7 @@
 S'-> S
 S -> BEGIN A END
 A -> BEGIN A END
-A -> IF B THEN A ENDIF
+A -> IF B THEN A ENDIF A
 A -> LET C = D A
 A -> ''
 B -> D == D
