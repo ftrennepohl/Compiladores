@@ -38,4 +38,4 @@ class AFD(AFND):
                 self.states.pop(state.id)
 
 afd = AFD('input.txt')
-afd.printWithError()
+#afd.printWithError()

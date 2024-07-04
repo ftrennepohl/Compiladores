@@ -130,7 +130,7 @@ class AFND:
                 else:
                     linha.append('-')
             table.add_row(linha)
-        print(table)
+        #print(table)
         with open("out.txt", "w+") as arq:
             arq.write(str(table))
 

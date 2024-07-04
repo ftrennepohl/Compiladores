@@ -25,16 +25,15 @@ class LexicalAnalyzer:
                 current_state = 'S'
                 character_buffer = ''
                 for symbol_idx, symbol in enumerate(line):
-                    print(symbol)
                     if (symbol == ' ' or symbol == '\n') and current_state is not None: # se for separador e estado for final adiciona na TS
                         if self.afd.states[current_state].final:
                             if (current_state in self.afd.gr):
                                 if current_state == 'V':
                                     self.tape.append(character_buffer)
-                                    st.table.append(Token(line_idx + 1, 'id', character_buffer, character_buffer))
+                                    st.table.append(Token(line_idx + 1, 'id', character_buffer))
                                 if current_state == 'Z':
                                     self.tape.append(character_buffer)
-                                    st.table.append(Token(line_idx + 1, 'const', character_buffer, character_buffer))
+                                    st.table.append(Token(line_idx + 1, 'const', character_buffer))
                             else:
                                 self.tape.append(character_buffer)
                                 for k, v in self.labels.items():
@@ -72,8 +71,8 @@ class LexicalAnalyzer:
                         continue
                     character_buffer += symbol
         self.symbol_table = st
-        st.print()
-        print(self.tape)
+        #st.print()
+        #print(self.tape)
         return self.tape
         
 lex = LexicalAnalyzer(AFD('input.txt'))

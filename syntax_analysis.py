@@ -14,8 +14,6 @@ def syntactic_analyzer(output_tape, parsing_table_path, symbol_table:SymbolTable
     stack = [0]  # Initial stack with state 0
     idx = 0  # Index for the current token
     token = tokens[idx] if idx < len(tokens) else None
-    id_stack = []
-    result_stack = []
     
     while True:
 
@@ -61,7 +59,6 @@ def syntactic_analyzer(output_tape, parsing_table_path, symbol_table:SymbolTable
                 stack.append(int(goto_state))
             elif rule == 3:
                 stack = stack[:-6]  # A -> IF B THEN A ENDIF A
-                print(stack[-1])
                 try:
                     goto_state = parsing_table.at[stack[-1], 'A']
                 except KeyError:
@@ -74,18 +71,6 @@ def syntactic_analyzer(output_tape, parsing_table_path, symbol_table:SymbolTable
                 except KeyError:
                     print("Erro na produção A -> LET C = D A", stack, token)
                 stack.append(int(goto_state))
-                print(id_stack[-1], result_stack[-1])
-                if result_stack[-1] == 'TRUE' or result_stack[-1] == 'FALSE':
-                    var_type = 'bool'
-                    size = 1
-                else:
-                    var_type = 'int'
-                    size = 4
-                symbol_table.setValue(id_stack[-1], result_stack[-1])
-                symbol_table.setType(id_stack[-1], var_type)
-                symbol_table.setSize(id_stack[-1], size)
-                id_stack.pop()
-                result_stack.pop()
             elif rule == 5:
                 # A -> ε (epsilon)
                 try:
@@ -109,29 +94,32 @@ def syntactic_analyzer(output_tape, parsing_table_path, symbol_table:SymbolTable
                 stack.append(int(goto_state))
             elif rule == 8:
                 stack.pop()  # C -> id
-                id_stack.append(tokens[idx-1])
                 try:
                     goto_state = parsing_table.at[stack[-1], 'C']
                 except KeyError:
                     print("Erro na produção C -> id", stack, token)
                 stack.append(int(goto_state))
             elif rule in [9, 10]:
-                if (len(tokens_values) > 0): symbol_table.setValue(tokens[idx-1], tokens_values.pop())
+                #if (len(tokens_values) > 0): symbol_table.setValue(tokens[idx-1], tokens_values.pop())
                 stack.pop()  # D -> id | const
-                result_stack.append(tokens[idx-1])
                 try:
                     goto_state = parsing_table.at[stack[-1], 'D']
                 except KeyError:
                     print("Erro na produção D -> id | const", stack, token)
                 stack.append(int(goto_state))
-                if result_stack[-1] == 'TRUE' or result_stack[-1] == 'FALSE':
-                    var_type = 'bool'
-                    size = 1
-                else:
-                    var_type = 'int'
-                    size = 4
-                symbol_table.setType(tokens[idx-1], var_type)
-                symbol_table.setSize(tokens[idx-1], size)
+                for entry in symbol_table.table:
+                    if entry.identificador == tokens[idx-1]:
+                        if entry.rotulo == 'const':
+                            if tokens[idx-1] == 'TRUE' or tokens[idx-1] == 'FALSE':
+                                var_type = 'bool'
+                                size = 1
+                            else:
+                                var_type = 'int'
+                                size = 4
+                            symbol_table.setValue(tokens[idx-1],tokens[idx-1])
+                            symbol_table.setType(tokens[idx-1], var_type)
+                            symbol_table.setSize(tokens[idx-1], size)
+                
 
         elif action == 'acc':
             return True, "Success: Input is syntactically correct"
@@ -139,7 +127,7 @@ def syntactic_analyzer(output_tape, parsing_table_path, symbol_table:SymbolTable
             return False, "Error: Unrecognized action in parsing table"
 
 
-def convertTapeOutput(output_tape, symbol_table): # prepara a fita de saída para usar com o analisador sintatico
+'''def convertTapeOutput(output_tape, symbol_table): # prepara a fita de saída para usar com o analisador sintatico
     aux_tape = [token for token in output_tape]
     for idx, token in enumerate(output_tape):
         for entry in symbol_table.table:
@@ -159,4 +147,4 @@ print(input)
 
 sa = syntactic_analyzer(lex.tape, 'parsing_table.csv', lex.symbol_table)
 print(sa)
-print(lex.symbol_table.table)
+print(lex.symbol_table.table)'''
