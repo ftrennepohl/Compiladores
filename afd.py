@@ -36,3 +36,6 @@ class AFD(AFND):
                     new_state.final = True
             for state in nd_transition:
                 self.states.pop(state.id)
+
+afd = AFD('input.txt')
+afd.printWithError()
